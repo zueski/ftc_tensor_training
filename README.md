@@ -11,6 +11,7 @@ pip install -r requirements.txt
 1. Create directory and place jpgs in it
 ```bash
 mkdir training_raw
+```
 2. Annotate (label) images with PascalVOC format (xml files)
 ```bash
 mkdir training_labels
