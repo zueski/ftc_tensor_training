@@ -1,0 +1,6 @@
+# created by virtualenv automatically
+*
+!*.py
+!requirements.py
+!*.md
+!.gitignore
