@@ -26,8 +26,9 @@ def draw_rect(image, box, label, score):
 	cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color, 2)
 	cv2.putText(image, f'{int(label)}: {score}', (x_min, y_max), 1, 2, color, 1)
 
-def display_image(img, interpreter, output_details):
+def display_image(img, interpreter, input_details, output_details):
 	new_img = cv2.resize(img, (input_details[0]['shape'][1], input_details[0]['shape'][2]))
+	new_img = new_img.astype(input_details[0]['dtype'])
 	interpreter.set_tensor(input_details[0]['index'], [new_img])
 
 	interpreter.invoke()
@@ -36,9 +37,9 @@ def display_image(img, interpreter, output_details):
 		for output in output_details:
 			print(f"output {i}: {interpreter.get_tensor(output['index'])}")
 			i=i+1
-	rects = interpreter.get_tensor(output_details[1]['index'])
-	labels = interpreter.get_tensor(output_details[3]['index'])
-	scores = interpreter.get_tensor(output_details[0]['index'])
+	rects = interpreter.get_tensor(output_details[3]['index'])
+	labels = interpreter.get_tensor(output_details[2]['index'])
+	scores = interpreter.get_tensor(output_details[1]['index'])
 	
 	for index, score in enumerate(scores[0]):
 		if score > 0.2:
@@ -53,7 +54,8 @@ if args.debug:
 interpreter = tf.lite.Interpreter(model_path=args.model_path)
 
 input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
+# sort output
+output_details = sorted(interpreter.get_output_details(), key=lambda item: item.get("name"))
 
 if args.debug:
 	print('Found signature:', interpreter.get_signature_list())
@@ -70,7 +72,7 @@ if args.use_camera > -1:
 	while(True):
 		ret, frame = vid.read()
 		if ret:
-			display_image(frame, interpreter, output_details)
+			display_image(frame, interpreter, input_details, output_details)
 		if cv2.waitKey(1) & 0xFF == ord('q'):
 			break
 	vid.release()
@@ -83,7 +85,7 @@ else:
 		if args.debug:
 			print("reading file", file.resolve())
 		img = cv2.imread(r"{}".format(file.resolve()))
-		display_image(img, interpreter, output_details)
+		display_image(img, interpreter, input_details, output_details)
 		if cv2.waitKey(0) & 0xFF == ord('q'):
 			break
 cv2.destroyAllWindows()
