@@ -54,10 +54,15 @@ validation_data = object_detector.DataLoader.from_pascal_voc(
 
 model = object_detector.create(train_data, model_spec=spec, batch_size=8, train_whole_model=True, validation_data=validation_data)
 
-model.evaluate(validation_data)
+print(f"model is { type(model) }")
+
+
+print(f"evaluate: {model.evaluate(validation_data)}")
+
+#config = QuantizationConfig.for_dynamic(representative_data=train_data)
 
 # Export to Tensorflow Lite model and label file in `export_dir`.
-model.export(export_dir=args.model_output.resolve().to_posix(),export_format=ExportFormat.TFLITE)
-model.export(export_dir=args.model_output.resolve().to_posix(),export_format=ExportFormat.LABEL)
-model.export(export_dir=args.model_output.resolve().to_posix(),export_format=ExportFormat.SAVED_MODEL)
+model.export(export_dir=args.model_output.resolve(),export_format=ExportFormat.TFLITE)
+model.export(export_dir=args.model_output.resolve(),export_format=ExportFormat.LABEL)
+model.export(export_dir=args.model_output.resolve(),export_format=ExportFormat.SAVED_MODEL)
 print(model.summary())

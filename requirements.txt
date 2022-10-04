@@ -1,5 +1,8 @@
 tensorflow-object-detection-api >= 0.1.1
 tflite-model-maker >= 0.3.4
 tflite-support >= 0.3.1
-labelImg >= 1.8.6
 opencv-python >= 4.5.4.00
+pycocotools >= 2.0.5
+
+# used to label
+labelImg >= 1.8.6

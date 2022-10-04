@@ -8,6 +8,7 @@ parser.add_argument('-s', '--source', type=pathlib.Path, dest='source_img_path',
 parser.add_argument('-a', '--annoation', type=pathlib.Path, dest='source_voc_path', help='Path to shuffle images annotations from', required=True)
 parser.add_argument('-t', '--target', type=pathlib.Path, dest='train_path', help='Path to create training images and annotations', required=True)
 parser.add_argument('-r', '--ratio', type=float, dest='train_ratio', help='Train ratio', default=0.8, required=False)
+parser.add_argument('-f', '--format', dest='extension', help='file type', default='jpg')
 args = parser.parse_args()
 
 def create_if_needed_test_if_empty(path:pathlib.Path):
@@ -36,7 +37,7 @@ file_train_count = int(len(image_paths) * args.train_ratio)
 print(f"training set size is {file_train_count}")
 for i, image_path in enumerate(image_paths):
 	img_path = f'{source_img_path}/{image_path}'
-	voc_path = f'{source_voc_path}/{image_path.replace("jpg", "xml")}'
+	voc_path = f'{source_voc_path}/{image_path.replace(args.extension, "xml")}'
 	if not os.path.exists(voc_path):
 		print(f"skipping {voc_path}")
 	else:
